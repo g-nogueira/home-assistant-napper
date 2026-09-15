@@ -57,6 +57,19 @@ Assistant config entry, as other authenticated integrations do. It refreshes
 the ID token before expiration and asks for reauthentication if Napper rejects
 the stored credentials.
 
+## Releases and testing
+
+`master` is the stable channel. HACS normally installs only versions published
+there as a GitHub Release, such as `v0.2.0`.
+
+Features are integrated through the `dev` branch before they are promoted to
+`master`. A beta is an explicit GitHub pre-release, for example `v0.3.0b1`.
+This keeps development commits out of normal HACS updates.
+
+To test a beta, enable the Napper repository's disabled **pre-release** switch
+entity in Home Assistant, then use **Redownload** in HACS and select the beta
+release. Turn the switch off again to return to stable updates.
+
 ## Behavior and privacy
 
 - The integration is strictly read-only. It does not create, edit, or delete

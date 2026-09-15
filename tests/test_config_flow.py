@@ -1,6 +1,6 @@
 """Tests for the Napper config flow."""
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from homeassistant import config_entries
 from homeassistant.config_entries import SOURCE_REAUTH, SOURCE_USER
@@ -32,6 +32,14 @@ async def test_user_flow_creates_entry(hass) -> None:
     """Test email and OTP setup."""
     with (
         patch(
+            "custom_components.napper.async_setup_entry",
+            new=AsyncMock(return_value=True),
+        ),
+        patch(
+            "custom_components.napper.config_flow.async_get_clientsession",
+            return_value=MagicMock(),
+        ),
+        patch(
             "custom_components.napper.config_flow.NapperApiClient.async_send_otp",
             new=AsyncMock(),
         ) as send_otp,
@@ -53,6 +61,11 @@ async def test_user_flow_creates_entry(hass) -> None:
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {CONF_OTP: " 123456 "}
         )
+
+        # A user flow creates a real entry. Remove it while the API client is
+        # mocked so Home Assistant's test cleanup does not set it up later and
+        # accidentally make a network request.
+        await hass.config_entries.async_remove(result["result"].entry_id)
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["title"] == "parent@example.test"
@@ -79,6 +92,10 @@ async def test_reauth_updates_existing_entry(hass) -> None:
     entry.add_to_hass(hass)
 
     with (
+        patch(
+            "custom_components.napper.config_flow.async_get_clientsession",
+            return_value=MagicMock(),
+        ),
         patch(
             "custom_components.napper.config_flow.NapperApiClient.async_send_otp",
             new=AsyncMock(),

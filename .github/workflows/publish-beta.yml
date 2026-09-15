@@ -1,0 +1,32 @@
+name: Publish beta release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version already present in manifest.json (for example 0.2.0b1)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.ref_name == 'dev'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify beta version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          test "$(python -c 'import json; print(json.load(open("custom_components/napper/manifest.json"))["version"])')" = "$VERSION"
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+b[0-9]+$ ]]
+      - name: Create GitHub pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: gh release create "v$VERSION" --target "$GITHUB_SHA" --prerelease --generate-notes

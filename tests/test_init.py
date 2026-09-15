@@ -1,6 +1,6 @@
 """Tests for Napper config entry setup."""
 
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -40,6 +40,10 @@ async def test_setup_creates_entities_for_each_baby(hass) -> None:
     )
 
     with (
+        patch(
+            "custom_components.napper.async_get_clientsession",
+            return_value=MagicMock(),
+        ),
         patch(
             "custom_components.napper.api.NapperApiClient.async_get_babies",
             new=AsyncMock(return_value=(baby,)),
