@@ -30,10 +30,6 @@ a nap remains open.
 
 ### HACS custom repository
 
-HACS cannot access private GitHub repositories. Use this method after the
-repository is made public; while it remains private, use the manual method
-below.
-
 1. Open HACS in Home Assistant.
 2. Add `https://github.com/g-nogueira/home-assistant-napper` as a custom
    repository with type **Integration**.
@@ -52,16 +48,34 @@ Home Assistant configuration, then restart Home Assistant.
 3. Enter the email address used in Napper.
 4. Enter the one-time code sent by Napper.
 
+To change the polling interval afterwards, open **Settings → Devices &
+services → Napper → Configure**. The default is 60 seconds; values from 30 to
+3600 seconds are supported. The integration reloads after saving the option.
+
 The integration stores the resulting ID and refresh tokens in the Home
 Assistant config entry, as other authenticated integrations do. It refreshes
 the ID token before expiration and asks for reauthentication if Napper rejects
 the stored credentials.
 
+## Releases and testing
+
+`master` is the stable channel. HACS normally installs only versions published
+there as a GitHub Release, such as `v0.2.0`.
+
+Features are integrated through the `dev` branch before they are promoted to
+`master`. A beta is an explicit GitHub pre-release, for example `v0.3.0b1`.
+This keeps development commits out of normal HACS updates.
+
+To test a beta, enable the Napper repository's disabled **pre-release** switch
+entity in Home Assistant, then use **Redownload** in HACS and select the beta
+release. Turn the switch off again to return to stable updates.
+
 ## Behavior and privacy
 
 - The integration is strictly read-only. It does not create, edit, or delete
   Napper logs.
-- It polls once every 60 seconds.
+- It polls every 60 seconds by default; the interval is configurable from 30 to
+  3600 seconds.
 - It does not log email addresses, tokens, baby IDs, baby names, or API bodies.
 - Do not attach mitmproxy flows, HAR files, or Home Assistant storage files to
   issues; they can contain long-lived credentials and family data.

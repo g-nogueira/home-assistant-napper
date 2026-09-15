@@ -53,6 +53,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: NapperConfigEntry) -> bo
     await coordinator.async_config_entry_first_refresh()
 
     entry.runtime_data = NapperRuntimeData(client, coordinator)
+    previous_options = dict(entry.options)
+
+    async def async_options_updated(
+        hass: HomeAssistant, updated_entry: NapperConfigEntry
+    ) -> None:
+        """Reload only when integration options changed."""
+        if dict(updated_entry.options) != previous_options:
+            await hass.config_entries.async_reload(updated_entry.entry_id)
+
+    entry.async_on_unload(entry.add_update_listener(async_options_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
