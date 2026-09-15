@@ -74,7 +74,8 @@ release. Turn the switch off again to return to stable updates.
 
 - The integration is strictly read-only. It does not create, edit, or delete
   Napper logs.
-- It polls once every 60 seconds.
+- It polls every 60 seconds by default; the interval is configurable from 30 to
+  3600 seconds.
 - It does not log email addresses, tokens, baby IDs, baby names, or API bodies.
 - Do not attach mitmproxy flows, HAR files, or Home Assistant storage files to
   issues; they can contain long-lived credentials and family data.
