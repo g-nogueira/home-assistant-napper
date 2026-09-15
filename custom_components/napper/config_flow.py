@@ -8,8 +8,9 @@ from uuid import uuid4
 
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.config_entries import ConfigFlowResult
+from homeassistant.config_entries import ConfigFlowResult, OptionsFlow
 from homeassistant.const import CONF_EMAIL
+from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from . import _tokens_to_entry_data
@@ -20,7 +21,15 @@ from .api import (
     NapperConnectionError,
     NapperInvalidOtpError,
 )
-from .const import CONF_DEVICE_ID, CONF_OTP, DOMAIN
+from .const import (
+    CONF_DEVICE_ID,
+    CONF_OTP,
+    CONF_POLL_INTERVAL_SECONDS,
+    DEFAULT_POLL_INTERVAL_SECONDS,
+    DOMAIN,
+    MAX_POLL_INTERVAL_SECONDS,
+    MIN_POLL_INTERVAL_SECONDS,
+)
 from .models import NapperTokens
 
 
@@ -28,6 +37,14 @@ class NapperConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a Napper config flow."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> NapperOptionsFlow:
+        """Return the options flow for this config entry."""
+        return NapperOptionsFlow(config_entry)
 
     def __init__(self) -> None:
         self._email: str | None = None
@@ -178,4 +195,44 @@ class NapperConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return NapperApiClient(
             async_get_clientsession(self.hass),
             self._device_id,
+        )
+
+
+class NapperOptionsFlow(OptionsFlow):
+    """Handle Napper integration options."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self._config_entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Configure the polling interval."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            poll_interval = user_input[CONF_POLL_INTERVAL_SECONDS]
+            if not (
+                MIN_POLL_INTERVAL_SECONDS
+                <= poll_interval
+                <= MAX_POLL_INTERVAL_SECONDS
+            ):
+                errors[CONF_POLL_INTERVAL_SECONDS] = "invalid_poll_interval"
+            else:
+                return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_POLL_INTERVAL_SECONDS,
+                        default=self._config_entry.options.get(
+                            CONF_POLL_INTERVAL_SECONDS,
+                            DEFAULT_POLL_INTERVAL_SECONDS,
+                        ),
+                    ): vol.Coerce(int),
+                }
+            ),
+            errors=errors,
         )
