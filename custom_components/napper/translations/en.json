@@ -40,6 +40,20 @@
       "reauth_successful": "Reauthentication was successful"
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Napper settings",
+        "description": "Choose how often Napper is checked. The default is 60 seconds; the allowed range is 30 to 3600 seconds.",
+        "data": {
+          "poll_interval_seconds": "Polling interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "invalid_poll_interval": "Enter a value from 30 to 3600 seconds"
+    }
+  },
   "entity": {
     "binary_sensor": {
       "sleeping": {"name": "Sleeping"},
