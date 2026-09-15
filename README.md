@@ -30,6 +30,10 @@ a nap remains open.
 
 ### HACS custom repository
 
+HACS cannot access private GitHub repositories. Use this method after the
+repository is made public; while it remains private, use the manual method
+below.
+
 1. Open HACS in Home Assistant.
 2. Add `https://github.com/g-nogueira/home-assistant-napper` as a custom
    repository with type **Integration**.
