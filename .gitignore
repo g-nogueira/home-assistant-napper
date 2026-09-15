@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.coverage
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+coverage.xml
+htmlcov/
+
+# Never commit captures or credentials.
+*.flow
+*.flows
+*.har
+.env

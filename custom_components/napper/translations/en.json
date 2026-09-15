@@ -1,0 +1,66 @@
+{
+  "title": "Napper",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Napper",
+        "description": "Enter the email address used by your Napper account. Napper will send you a one-time code.",
+        "data": {
+          "email": "Email"
+        }
+      },
+      "otp": {
+        "title": "Enter your Napper code",
+        "description": "Enter the one-time code sent to your email address.",
+        "data": {
+          "otp": "One-time code"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate Napper",
+        "description": "Napper needs to reauthenticate {email}. Submit to receive a new one-time code."
+      },
+      "reauth_otp": {
+        "title": "Enter your Napper code",
+        "description": "Enter the new one-time code sent to your email address.",
+        "data": {
+          "otp": "One-time code"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to Napper",
+      "invalid_email": "Napper rejected this email address",
+      "invalid_otp": "The one-time code is invalid or expired",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "This Napper account is already configured",
+      "invalid_flow": "The setup flow expired. Please start again.",
+      "reauth_successful": "Reauthentication was successful"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "sleeping": {"name": "Sleeping"},
+      "napping": {"name": "Napping"},
+      "nap_paused": {"name": "Nap paused"},
+      "nursing": {"name": "Nursing"},
+      "night_waking": {"name": "Night waking"}
+    },
+    "sensor": {
+      "sleep_state": {
+        "name": "Sleep state",
+        "state": {
+          "awake": "Awake",
+          "napping": "Napping",
+          "nap_paused": "Nap paused",
+          "night_sleeping": "Night sleeping",
+          "night_waking": "Night waking"
+        }
+      },
+      "sleep_started_at": {"name": "Sleep started at"},
+      "last_activity_at": {"name": "Last activity at"}
+    }
+  }
+}
