@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -17,7 +18,7 @@ from .api import (
     NapperAuthenticationError,
     NapperRateLimitError,
 )
-from .const import DOMAIN, UPDATE_INTERVAL
+from .const import CONF_POLL_INTERVAL_SECONDS, DEFAULT_POLL_INTERVAL_SECONDS, DOMAIN
 from .models import NapperBaby, NapperBabyState, derive_baby_state
 
 _LOGGER = logging.getLogger(__name__)
@@ -37,7 +38,11 @@ class NapperDataUpdateCoordinator(DataUpdateCoordinator[dict[str, NapperBabyStat
             _LOGGER,
             config_entry=entry,
             name=DOMAIN,
-            update_interval=UPDATE_INTERVAL,
+            update_interval=timedelta(
+                seconds=entry.options.get(
+                    CONF_POLL_INTERVAL_SECONDS, DEFAULT_POLL_INTERVAL_SECONDS
+                )
+            ),
             always_update=False,
         )
         self.client = client
