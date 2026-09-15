@@ -53,6 +53,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: NapperConfigEntry) -> bo
     await coordinator.async_config_entry_first_refresh()
 
     entry.runtime_data = NapperRuntimeData(client, coordinator)
+    entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
@@ -60,6 +61,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: NapperConfigEntry) -> bo
 async def async_unload_entry(hass: HomeAssistant, entry: NapperConfigEntry) -> bool:
     """Unload a Napper config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+
+async def _async_update_listener(hass: HomeAssistant, entry: NapperConfigEntry) -> None:
+    """Reload the integration when its options change."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 def _tokens_from_entry_data(data: dict[str, Any]) -> NapperTokens:
