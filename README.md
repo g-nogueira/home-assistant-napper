@@ -30,10 +30,6 @@ a nap remains open.
 
 ### HACS custom repository
 
-HACS cannot access private GitHub repositories. Use this method after the
-repository is made public; while it remains private, use the manual method
-below.
-
 1. Open HACS in Home Assistant.
 2. Add `https://github.com/g-nogueira/home-assistant-napper` as a custom
    repository with type **Integration**.
@@ -51,6 +47,10 @@ Home Assistant configuration, then restart Home Assistant.
 2. Search for **Napper**.
 3. Enter the email address used in Napper.
 4. Enter the one-time code sent by Napper.
+
+To change the polling interval afterwards, open **Settings → Devices &
+services → Napper → Configure**. The default is 60 seconds; values from 30 to
+3600 seconds are supported. The integration reloads after saving the option.
 
 The integration stores the resulting ID and refresh tokens in the Home
 Assistant config entry, as other authenticated integrations do. It refreshes
